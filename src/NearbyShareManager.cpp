@@ -1,5 +1,6 @@
 #include "NearbyShareManager.hpp"
 #include "jni.hpp"
+#include "TaskPopup.hpp"
 
 NearbyShareManager::NearbyShareManager()
     : m_launcherOutdated(false)
@@ -15,11 +16,35 @@ void NearbyShareManager::registerJNINatives() {
     jni::registerJNINatives();
 }
 
-void NearbyShareManager::requestPermissionsIfNeeded() {
-    if (!jni::hasPermissions()) {
-        geode::log::debug("jarvis, request permissions");
-        jni::requestPermissions();
+geode::Task<bool> NearbyShareManager::requestPermissionsIfNeeded() {
+    geode::log::debug("requesting permissions if needed...");
+    if (jni::hasPermissions()) {
+        geode::log::debug("we already have permissions!");
+        co_return true;
     }
+
+    auto res = co_await TaskPopup(
+        "Nearby Share",
+        "<co>Nearby Share</c> needs <cj>extended permissions</c> to function. "
+        "Your location is <cr>not</c> tracked and is <cr>not</c> stored, "
+        "and in fact not used at all, except by <cg>your phone</c>!\n"
+        "The <cp>source code</c> for this mod is publicly available online.",
+        "Cancel", "Grant"
+    ).showAndWait();
+
+    // cancelled dialog
+    if (!res) {
+        geode::log::debug("popup was cancelled");
+        co_return false;
+    }
+
+    geode::log::debug("jarvis, request permissions");
+    jni::requestPermissions();
+    co_return jni::hasPermissions();
+}
+
+void NearbyShareManager::setDiscoveryName(const std::string& name) {
+    jni::setDiscoveryName(name);
 }
 
 void NearbyShareManager::startDiscovery() {
@@ -115,4 +140,8 @@ void NearbyShareManager::closeConnection(const std::string& endpoint) {
 void NearbyShareManager::connectionClosed(const std::string& endpoint) {
     if (m_uploadPopup) m_uploadPopup->connectionClosed(endpoint);
     if (m_downloadPopup) m_downloadPopup->connectionClosed(endpoint);
+}
+
+$on_mod(Loaded) {
+    NearbyShareManager::get().registerJNINatives();
 }

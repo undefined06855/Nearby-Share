@@ -2,13 +2,15 @@
 #include <Geode/ui/Popup.hpp>
 #include "SharedPopupData.hpp"
 
-class NearbyUploadPopup : public SharedPopupData, geode::Popup<GJGameLevel*> {
+class NearbyUploadPopup : public SharedPopupData, public geode::Popup<GJGameLevel*> {
 public:
     static NearbyUploadPopup* create(GJGameLevel* level);
     bool setup(GJGameLevel* level);
 
     void advertisementStarted();
     void advertisementFailed(const std::string& error);
+
+    void updateEndpointList();
 
     void initiateConnection(const std::string& endpoint, const std::string& digits);
 

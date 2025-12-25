@@ -1,4 +1,5 @@
 #include "NearbyUploadPopup.hpp"
+#include "NearbyShareManager.hpp"
 
 NearbyUploadPopup* NearbyUploadPopup::create(GJGameLevel* level) {
     auto ret = new NearbyUploadPopup;
@@ -12,16 +13,27 @@ NearbyUploadPopup* NearbyUploadPopup::create(GJGameLevel* level) {
 }
 
 bool NearbyUploadPopup::setup(GJGameLevel* level) {
+    setTitle(fmt::format("Uploading {}", level->m_levelName).c_str());
+
+    NearbyShareManager::get().setDiscoveryName("test uploader");
+    NearbyShareManager::get().startAdvertising();
 
     return true;
 }
 
 void NearbyUploadPopup::advertisementStarted() {
-
+    geode::log::debug("advertisement started...");
 }
 
 void NearbyUploadPopup::advertisementFailed(const std::string& error) {
+    geode::log::debug("advertisement failed! {}", error);
+}
 
+void NearbyUploadPopup::updateEndpointList() {
+    geode::log::debug("endpoint list update:");
+    geode::log::pushNest();
+    for (auto& endpoint : m_endpoints) geode::log::debug(" - {}", endpoint);
+    geode::log::popNest();
 }
 
 void NearbyUploadPopup::initiateConnection(const std::string& endpoint, const std::string& digits) {

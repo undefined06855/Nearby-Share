@@ -93,15 +93,15 @@ void jni::registerJNINatives() {
         return;
     }
 
-    auto nearbyShareUtils = cocos2d::JniHelper::getClassID("com/geode/launcher/utils/NearbyShareUtils");
-    ret = env->RegisterNatives(nearbyShareUtils, methods, sizeof(methods) / sizeof(JNINativeMethod));
+    auto nearbyConnectionsUtils = cocos2d::JniHelper::getClassID("com/geode/launcher/utils/NearbyConnectionsUtils");
+    ret = env->RegisterNatives(nearbyConnectionsUtils, methods, sizeof(methods) / sizeof(JNINativeMethod));
     if (ret) {
         geode::log::warn("Failed to set native functions!");
         NearbyShareManager::get().m_launcherOutdated = true;
         return;
     }
 
-    jni::enableDiscovery(true);
+    jni::enableNearbyConnectionsCallbacks(true);
 }
 
 #pragma clang diagnostic pop
@@ -224,10 +224,12 @@ void jni::connectionClosedCallback(JNIEnv* env, jobject, jstring endpoint) {
 
 bool jni::hasPermissions() {
     auto info = cocos2d::JniMethodInfo();
-    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyShareUtils", "hasPermissions", "()Z")) {
+    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyConnectionsUtils", "hasPermissions", "()Z")) {
         geode::log::warn("Failed to get JNI method info for hasPermissions!");
         return false;
     }
+
+    geode::log::debug("jni::hasPermissions");
 
     auto ret = info.env->CallStaticBooleanMethod(info.classID, info.methodID);
     info.env->DeleteLocalRef(info.classID);
@@ -237,21 +239,25 @@ bool jni::hasPermissions() {
 
 void jni::requestPermissions() {
     auto info = cocos2d::JniMethodInfo();
-    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyShareUtils", "requestPermissions", "()V")) {
+    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyConnectionsUtils", "requestPermissions", "()V")) {
         geode::log::warn("Failed to get JNI method info for requestPermissions!");
         return;
     }
+
+    geode::log::debug("jni::requestPermissions");
 
     info.env->CallStaticVoidMethod(info.classID, info.methodID);
     info.env->DeleteLocalRef(info.classID);
 }
 
-void jni::enableDiscovery(bool enabled) {
+void jni::enableNearbyConnectionsCallbacks(bool enabled) {
     auto info = cocos2d::JniMethodInfo();
-    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyShareUtils", "enableDiscovery", "(Z)V")) {
-        geode::log::warn("Failed to get JNI method info for enableDiscovery!");
+    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyConnectionsUtils", "enableNearbyConnectionsCallbacks", "(Z)V")) {
+        geode::log::warn("Failed to get JNI method info for enableNearbyConnectionsCallbacks!");
         return;
     }
+
+    geode::log::debug("jni::enableNearbyConnectionsCallbacks({})", enabled);
 
     info.env->CallStaticVoidMethod(info.classID, info.methodID, enabled);
     info.env->DeleteLocalRef(info.classID);
@@ -259,10 +265,12 @@ void jni::enableDiscovery(bool enabled) {
 
 void jni::setDiscoveryName(const std::string& name) {
     auto info = cocos2d::JniMethodInfo();
-    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyShareUtils", "setDiscoveryName", "(Ljava/lang/String;)V")) {
+    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyConnectionsUtils", "setDiscoveryName", "(Ljava/lang/String;)V")) {
         geode::log::warn("Failed to get JNI method info for setDiscoveryName!");
         return;
     }
+
+    geode::log::debug("jni::setDiscoveryName({})", name);
 
     jstring javaString = info.env->NewStringUTF(name.data());
     info.env->CallStaticVoidMethod(info.classID, info.methodID, javaString);
@@ -272,10 +280,12 @@ void jni::setDiscoveryName(const std::string& name) {
 
 void jni::beginDiscovery(Strategy strategy) {
     auto info = cocos2d::JniMethodInfo();
-    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyShareUtils", "beginDiscovery", "(I)V")) {
+    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyConnectionsUtils", "beginDiscovery", "(I)V")) {
         geode::log::warn("Failed to get JNI method info for beginDiscovery!");
         return;
     }
+
+    geode::log::debug("jni::beginDiscovery({})", fmt::underlying(strategy));
 
     info.env->CallStaticVoidMethod(info.classID, info.methodID, fmt::underlying(strategy));
     info.env->DeleteLocalRef(info.classID);
@@ -283,10 +293,12 @@ void jni::beginDiscovery(Strategy strategy) {
 
 void jni::beginAdvertising(Strategy strategy) {
     auto info = cocos2d::JniMethodInfo();
-    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyShareUtils", "beginAdvertising", "(I)V")) {
+    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyConnectionsUtils", "beginAdvertising", "(I)V")) {
         geode::log::warn("Failed to get JNI method info for beginAdvertising!");
         return;
     }
+
+    geode::log::debug("jni::beginAdvertising({})", fmt::underlying(strategy));
 
     info.env->CallStaticVoidMethod(info.classID, info.methodID, fmt::underlying(strategy));
     info.env->DeleteLocalRef(info.classID);
@@ -294,10 +306,12 @@ void jni::beginAdvertising(Strategy strategy) {
 
 void jni::requestConnection(const std::string& endpoint) {
     auto info = cocos2d::JniMethodInfo();
-    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyShareUtils", "requestConnection", "(Ljava/lang/String;)V")) {
+    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyConnectionsUtils", "requestConnection", "(Ljava/lang/String;)V")) {
         geode::log::warn("Failed to get JNI method info for requestConnection!");
         return;
     }
+
+    geode::log::debug("jni::requestConnection({})", endpoint);
 
     jstring javaString = info.env->NewStringUTF(endpoint.data());
     info.env->CallStaticVoidMethod(info.classID, info.methodID, javaString);
@@ -307,10 +321,12 @@ void jni::requestConnection(const std::string& endpoint) {
 
 void jni::acceptConnection(const std::string& endpoint) {
     auto info = cocos2d::JniMethodInfo();
-    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyShareUtils", "acceptConnection", "(Ljava/lang/String;)V")) {
+    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyConnectionsUtils", "acceptConnection", "(Ljava/lang/String;)V")) {
         geode::log::warn("Failed to get JNI method info for acceptConnection!");
         return;
     }
+
+    geode::log::debug("jni::acceptConnection({})", endpoint);
 
     jstring javaString = info.env->NewStringUTF(endpoint.data());
     info.env->CallStaticVoidMethod(info.classID, info.methodID, javaString);
@@ -320,10 +336,12 @@ void jni::acceptConnection(const std::string& endpoint) {
 
 void jni::rejectConnection(const std::string& endpoint) {
     auto info = cocos2d::JniMethodInfo();
-    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyShareUtils", "rejectConnection", "(Ljava/lang/String;)V")) {
+    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyConnectionsUtils", "rejectConnection", "(Ljava/lang/String;)V")) {
         geode::log::warn("Failed to get JNI method info for rejectConnection!");
         return;
     }
+
+    geode::log::debug("jni::rejectConnection({})", endpoint);
 
     jstring javaString = info.env->NewStringUTF(endpoint.data());
     info.env->CallStaticVoidMethod(info.classID, info.methodID, javaString);
@@ -333,10 +351,12 @@ void jni::rejectConnection(const std::string& endpoint) {
 
 void jni::endDiscovery() {
     auto info = cocos2d::JniMethodInfo();
-    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyShareUtils", "endDiscovery", "()V")) {
+    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyConnectionsUtils", "endDiscovery", "()V")) {
         geode::log::warn("Failed to get JNI method info for endDiscovery!");
         return;
     }
+
+    geode::log::debug("jni::endDiscovery()");
 
     info.env->CallStaticVoidMethod(info.classID, info.methodID);
     info.env->DeleteLocalRef(info.classID);
@@ -344,10 +364,12 @@ void jni::endDiscovery() {
 
 void jni::endAdvertisement() {
     auto info = cocos2d::JniMethodInfo();
-    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyShareUtils", "endAdvertisement", "()V")) {
+    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyConnectionsUtils", "endAdvertisement", "()V")) {
         geode::log::warn("Failed to get JNI method info for endAdvertisement!");
         return;
     }
+
+    geode::log::debug("jni::endAdvertisement()");
 
     info.env->CallStaticVoidMethod(info.classID, info.methodID);
     info.env->DeleteLocalRef(info.classID);
@@ -355,10 +377,12 @@ void jni::endAdvertisement() {
 
 void jni::sendData(const std::string& endpoint, std::span<const uint8_t> data) {
     auto info = cocos2d::JniMethodInfo();
-    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyShareUtils", "sendData", "(Ljava/lang/String;[B)V")) {
+    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyConnectionsUtils", "sendData", "(Ljava/lang/String;[B)V")) {
         geode::log::warn("Failed to get JNI method info for sendData!");
         return;
     }
+
+    geode::log::debug("jni::sendData({}, <{} bytes>)", endpoint, data.size_bytes());
 
     jstring javaString = info.env->NewStringUTF(endpoint.data());
     jbyteArray javaData = info.env->NewByteArray(data.size());
@@ -371,10 +395,12 @@ void jni::sendData(const std::string& endpoint, std::span<const uint8_t> data) {
 
 void jni::disconnect(const std::string& endpoint) {
     auto info = cocos2d::JniMethodInfo();
-    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyShareUtils", "disconnect", "(Ljava/lang/String;)V")) {
+    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyConnectionsUtils", "disconnect", "(Ljava/lang/String;)V")) {
         geode::log::warn("Failed to get JNI method info for disconnect!");
         return;
     }
+
+    geode::log::debug("jni::disconnect({})", endpoint);
 
     jstring javaString = info.env->NewStringUTF(endpoint.data());
     info.env->CallStaticVoidMethod(info.classID, info.methodID, javaString);

@@ -1,6 +1,7 @@
 #pragma once
 #include "NearbyDownloadPopup.hpp"
 #include "NearbyUploadPopup.hpp"
+#include <Geode/utils/coro.hpp>
 
 class NearbyShareManager {
     NearbyShareManager();
@@ -13,7 +14,9 @@ public:
 
     void registerJNINatives();
 
-    void requestPermissionsIfNeeded();
+    geode::Task<bool> requestPermissionsIfNeeded();
+
+    void setDiscoveryName(const std::string& name);
 
     void startDiscovery();
     void discoveryStarted();

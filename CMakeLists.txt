@@ -21,6 +21,7 @@ file(GLOB_RECURSE SOURCES
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
 # TODO: PLEAASE REMIND ME TO REMOVE THIS
+# okay well i've just pushed it to github BUT whatever it's fine
 target_include_directories(${PROJECT_NAME} PUBLIC /home/undefined0/things/jdk-25.0.1/include)
 target_include_directories(${PROJECT_NAME} PUBLIC /home/undefined0/things/jdk-25.0.1/include/linux)
 

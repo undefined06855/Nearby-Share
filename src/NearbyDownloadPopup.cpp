@@ -1,4 +1,5 @@
 #include "NearbyDownloadPopup.hpp"
+#include "NearbyShareManager.hpp"
 
 NearbyDownloadPopup* NearbyDownloadPopup::create() {
     auto ret = new NearbyDownloadPopup;
@@ -12,15 +13,27 @@ NearbyDownloadPopup* NearbyDownloadPopup::create() {
 }
 
 bool NearbyDownloadPopup::setup() {
+    setTitle("Downloading Level");
+
+    NearbyShareManager::get().setDiscoveryName("test downloader");
+    NearbyShareManager::get().startDiscovery();
+
     return true;
 }
 
 void NearbyDownloadPopup::discoveryStarted() {
-
+    geode::log::info("discovery started...");
 }
 
 void NearbyDownloadPopup::discoveryFailed(const std::string& error) {
+    geode::log::info("discovery failed! {}", error);
+}
 
+void NearbyDownloadPopup::updateEndpointList() {
+    geode::log::debug("endpoint list update:");
+    geode::log::pushNest();
+    for (auto& endpoint : m_endpoints) geode::log::debug(" - {}", endpoint);
+    geode::log::popNest();
 }
 
 void NearbyDownloadPopup::requestSuccessful(const std::string& endpoint) {

@@ -40,7 +40,7 @@ void connectionClosedCallback(JNIEnv* env, jobject, jstring endpoint);
 bool hasPermissions();
 void requestPermissions();
 
-void enableDiscovery(bool enabled);
+void enableNearbyConnectionsCallbacks(bool enabled);
 void setDiscoveryName(const std::string& name);
 
 void beginDiscovery(Strategy strategy);

@@ -6,4 +6,6 @@ public:
 
     void endpointFound(const std::string& endpoint);
     void endpointLost(const std::string& endpoint);
+
+    virtual void updateEndpointList() = 0;
 };

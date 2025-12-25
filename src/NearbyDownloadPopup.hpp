@@ -2,13 +2,15 @@
 #include <Geode/ui/Popup.hpp>
 #include "SharedPopupData.hpp"
 
-class NearbyDownloadPopup : public SharedPopupData, geode::Popup<> {
+class NearbyDownloadPopup : public SharedPopupData, public geode::Popup<> {
 public:
     static NearbyDownloadPopup* create();
     bool setup();
 
     void discoveryStarted();
     void discoveryFailed(const std::string& error);
+
+    void updateEndpointList();
 
     void requestSuccessful(const std::string& endpoint);
     void requestFailed(const std::string& endpoint);

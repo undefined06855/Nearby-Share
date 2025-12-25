@@ -14,6 +14,14 @@
     "description": "Use Android Nearby Share for GD Levels!",
     "tags": [],
 
+    "resources": {
+        "sprites": [ "resources/*.png" ]
+    },
+
+    "dependencies": {
+        "geode.node-ids": "v1.21.1"
+    },
+
     "links": {
         "source": "https://github.com/undefined06855/example-mod"
     }
