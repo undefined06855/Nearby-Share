@@ -101,7 +101,7 @@ void jni::registerJNINatives() {
         return;
     }
 
-    jni::enableNearbyConnectionsCallbacks(true);
+    jni::enableNearbyConnectionsCallbacks();
 }
 
 #pragma clang diagnostic pop
@@ -248,16 +248,16 @@ void jni::requestPermissions() {
     info.env->DeleteLocalRef(info.classID);
 }
 
-void jni::enableNearbyConnectionsCallbacks(bool enabled) {
+void jni::enableNearbyConnectionsCallbacks() {
     auto info = cocos2d::JniMethodInfo();
-    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyConnectionsUtils", "enableNearbyConnectionsCallbacks", "(Z)V")) {
+    if (!cocos2d::JniHelper::getStaticMethodInfo(info, "com/geode/launcher/utils/NearbyConnectionsUtils", "enableNearbyConnectionsCallbacks", "()V")) {
         geode::log::warn("Failed to get JNI method info for enableNearbyConnectionsCallbacks!");
         return;
     }
 
-    geode::log::debug("jni::enableNearbyConnectionsCallbacks({})", enabled);
+    geode::log::debug("jni::enableNearbyConnectionsCallbacks()");
 
-    info.env->CallStaticVoidMethod(info.classID, info.methodID, enabled);
+    info.env->CallStaticVoidMethod(info.classID, info.methodID);
     info.env->DeleteLocalRef(info.classID);
 }
 
