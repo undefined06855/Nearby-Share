@@ -22,7 +22,7 @@ void endpointFoundCallback(JNIEnv* env, jobject, jstring endpoint);
 void endpointLostCallback(JNIEnv* env, jobject, jstring endpoint);
 
 void connectionRequestSuccessCallback(JNIEnv* env, jobject, jstring endpoint);
-void connectionRequestFailureCallback(JNIEnv* env, jobject, jstring endpoint);
+void connectionRequestFailureCallback(JNIEnv* env, jobject, jstring endpoint, jstring error);
 
 void connectionInitiatedCallback(JNIEnv* env, jobject, jstring endpoint, jstring digits);
 

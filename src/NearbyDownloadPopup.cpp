@@ -40,7 +40,7 @@ void NearbyDownloadPopup::requestSuccessful(const std::string& endpoint) {
 
 }
 
-void NearbyDownloadPopup::requestFailed(const std::string& endpoint) {
+void NearbyDownloadPopup::requestFailed(const std::string& endpoint, const std::string& error) {
 
 }
 

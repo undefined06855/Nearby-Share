@@ -13,7 +13,7 @@ public:
     void updateEndpointList();
 
     void requestSuccessful(const std::string& endpoint);
-    void requestFailed(const std::string& endpoint);
+    void requestFailed(const std::string& endpoint, const std::string& error);
 
     void initiateConnection(const std::string& endpoint, const std::string& digits);
 

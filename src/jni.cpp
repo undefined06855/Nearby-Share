@@ -45,7 +45,7 @@ void jni::registerJNINatives() {
         },
         {
             "connectionRequestFailureCallback",
-            "(Ljava/lang/String;)V",
+            "(Ljava/lang/String;Ljava/lang/String;)V",
             reinterpret_cast<void*>(&jni::connectionRequestFailureCallback)
         },
         {
@@ -158,11 +158,11 @@ void jni::connectionRequestSuccessCallback(JNIEnv* env, jobject, jstring endpoin
     FREE_JSTRING(endpoint);
 }
 
-void jni::connectionRequestFailureCallback(JNIEnv* env, jobject, jstring endpoint) {
+void jni::connectionRequestFailureCallback(JNIEnv* env, jobject, jstring endpoint, jstring error) {
     geode::log::debug("jni::connectionRequestFailureCallback");
-    PARSE_JSTRING(endpoint);
-    NearbyShareManager::get().requestFailed(endpointString);
-    FREE_JSTRING(endpoint);
+    PARSE_JSTRING(endpoint); PARSE_JSTRING(error);
+    NearbyShareManager::get().requestFailed(endpointString, errorString);
+    FREE_JSTRING(endpoint); FREE_JSTRING(error);
 }
 
 void jni::connectionInitiatedCallback(JNIEnv* env, jobject, jstring endpoint, jstring digits) {
@@ -202,11 +202,9 @@ void jni::dataSendUpdateCallback(JNIEnv* env, jobject, jstring endpoint, jlong b
 
 void jni::dataReceivedCallback(JNIEnv* env, jobject, jstring endpoint, jbyteArray data) {
     geode::log::debug("jni::dataReceivedCallback");
-    PARSE_JSTRING(endpoint);
-    PARSE_JBYTEARRAY(data);
+    PARSE_JSTRING(endpoint); PARSE_JBYTEARRAY(data);
     NearbyShareManager::get().dataReceived(endpointString, dataSpan);
-    FREE_JSTRING(endpoint);
-    FREE_JBYTEARRAY(data);
+    FREE_JSTRING(endpoint); FREE_JBYTEARRAY(data);
 }
 
 void jni::connectionClosedCallback(JNIEnv* env, jobject, jstring endpoint) {

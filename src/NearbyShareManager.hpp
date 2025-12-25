@@ -31,7 +31,7 @@ public:
 
     void requestConnection(const std::string& endpoint);
     void requestSuccessful(const std::string& endpoint);
-    void requestFailed(const std::string& endpoint);
+    void requestFailed(const std::string& endpoint, const std::string& error);
 
     void connectionInitiated(const std::string& endpoint, const std::string& digits);
 

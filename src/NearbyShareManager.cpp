@@ -89,8 +89,8 @@ void NearbyShareManager::requestSuccessful(const std::string& endpoint) {
     if (m_downloadPopup) m_downloadPopup->requestSuccessful(endpoint);
 }
 
-void NearbyShareManager::requestFailed(const std::string& endpoint) {
-    if (m_downloadPopup) m_downloadPopup->requestFailed(endpoint);
+void NearbyShareManager::requestFailed(const std::string& endpoint, const std::string& error) {
+    if (m_downloadPopup) m_downloadPopup->requestFailed(endpoint, error);
 }
 
 void NearbyShareManager::connectionInitiated(const std::string& endpoint, const std::string& digits) {
